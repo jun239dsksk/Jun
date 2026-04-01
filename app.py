@@ -271,7 +271,7 @@ if db_file is not None and daily_file is not None:
             df_mapping['原始名称'].astype(str).str.strip(),
             df_mapping['标准名称'].astype(str).str.strip(),
         ))
-        
+        
         cust_mapping_dict = dict(zip(
             df_cust_mapping['原始名称'].astype(str).str.strip(),
             df_cust_mapping['标准名称'].astype(str).str.strip(),
