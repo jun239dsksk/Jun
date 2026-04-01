@@ -838,7 +838,17 @@ if db_file is not None and daily_file is not None:
             for prod, grp in df_wx.groupby('汇报专用名称'):
                 report += prod + ':' + str(len(grp)) + '车' + fmt_weight(grp['净重'].sum()) + '吨' + fmt_val(grp['金额'].sum(),'retail') + '元\n'
 
-        if len(df_sign) == 0:
+                if len(df_sign) == 0:
             report += '\n签单:无\n\n'
         else:
-            report += '\n签单:' + str(len(df_sign)) +
+            report += '\n签单:' + str(len(df_sign)) + '车' + fmt_weight(df_sign['净重'].sum()) + '吨\n'
+            for cust, grp in sign_custs:
+                report += cust + ':' + str(len(grp)) + '车' + fmt_weight(grp['净重'].sum()) + '吨\n'
+                for prod, p_grp in grp.groupby('汇报专用名称'):
+                    report += prod + ':' + str(len(p_grp)) + '车' + fmt_weight(p_grp['净重'].sum()) + '吨' + fmt_val(p_grp['金额'].sum(),'sign') + ' 元\n'
+                cust_money = do_round(grp['金额'].sum(), 'sign')
+                report += '共金额:' + fmt_val(cust_money,'sign') + ' 元\n'
+                report += '上日余额:' + fmt_val(orig_bal_dict.get(cust,0.0),'sign') + ' 元\n'
+                if deposit_dict.get(cust, 0.0) > 0:
+                    report += '今日充值:' + fmt_val(deposit_dict[cust],'sign') + ' 元\n'
+                report += '当日余额:' + fmt_val(bal_dict.get(cust,0.0),'sign') + ' 元\n\n'
