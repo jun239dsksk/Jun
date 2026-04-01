@@ -271,7 +271,7 @@ if db_file is not None and daily_file is not None:
             df_mapping['原始名称'].astype(str).str.strip(),
             df_mapping['标准名称'].astype(str).str.strip(),
         ))
-        
+        
         cust_mapping_dict = dict(zip(
             df_cust_mapping['原始名称'].astype(str).str.strip(),
             df_cust_mapping['标准名称'].astype(str).str.strip(),
@@ -421,7 +421,7 @@ if db_file is not None and daily_file is not None:
             add_log('INFO', '物料归类映射完成，新增 ' + str(len(new_mapping_records)) + ' 条映射记录')
 
         # ============================================================
-        # 第三关：客户归类映射 (全新引擎)
+        # 第三关：客户归类映射
         # ============================================================
         if '收货单位' not in df_daily_raw.columns:
             df_daily_raw['收货单位'] = ''
@@ -440,7 +440,6 @@ if db_file is not None and daily_file is not None:
         df_daily_raw['收货单位'] = df_daily_raw.apply(fix_shdw, axis=1)
         df_daily_raw['收货单位'] = df_daily_raw['收货单位'].apply(lambda x: cust_mapping_dict.get(x, x))
 
-        # 构建所有已知客户大名单
         known_custs_base = set(df_bal['客户名称'].dropna().astype(str).str.strip())
         if '收货单位' in df_hist.columns:
             known_custs_base.update(df_hist['收货单位'].dropna().astype(str).str.strip())
@@ -604,7 +603,6 @@ if db_file is not None and daily_file is not None:
         ])
         driver_options = ['(未选择)'] + all_known_drivers + ['➕ 手动输入新司机...']
 
-        # 🌟 动态生成客户大名单，确保刚刚新建的客户瞬间可用！
         hist_custs = df_hist['收货单位'].dropna().astype(str).tolist() if '收货单位' in df_hist.columns else []
         daily_custs = df_sales_report['收货单位'].dropna().astype(str).tolist()
         map_custs = df_cust_mapping['标准名称'].dropna().astype(str).tolist()
